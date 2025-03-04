@@ -1,0 +1,47 @@
+<%- include('../partials/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+
+<body>
+   <%- include('../partials/navigation.ejs') %>
+
+    <main>
+        <% if (errorMessage) { %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+        <% } else if (successMessage) { %>
+            <div class="user-message user-message--success"><%= successMessage %></div>
+        <% } %>
+        <form class="login-form" action="/register" method="POST" novalidate>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="form-control">
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" value="<%= oldInput.value('name') %>" class="<%= validationErrors.find(e => e.path === 'name') ? 'invalid' : '' %>">
+            </div>
+            <div class="form-control">
+                <label for="YOB">Year of birth</label>
+                <input type="number" name="YOB" id="YOB" value="<%= oldInput.value('YOB') %>" class="<%= validationErrors.find(e => e.path === 'YOB') ? 'invalid' : '' %>">
+            </div>
+            <div class="form-control">
+                <label for="gender">Gender</label>
+                <select name="gender" id="gender">
+                    <option value="true" selected>Male</option>
+                    <option value="false">Female</option>
+                </select>
+            </div>
+            <div class="form-control">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" value="<%= oldInput.value('username') %>" class="<%= validationErrors.find(e => e.path === 'username') ? 'invalid' : '' %>">
+            </div>
+            <div class="form-control">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" value="<%= oldInput.value('password') %>" class="<%= validationErrors.find(e => e.path === 'password') ? 'invalid' : '' %>">
+            </div>
+            <div class="form-control">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" name="confirmPassword" id="confirmPassword" value="<%= oldInput.value('confirmPassword') %>" class="<%= validationErrors.find(e => e.path === 'confirmPassword') ? 'invalid' : '' %>">
+            </div>
+            <button class="btn" type="submit">Signup</button>
+        </form>
+    </main>
+<%- include('../partials/end.ejs') %>

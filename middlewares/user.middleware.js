@@ -1,3 +1,4 @@
+import Member from "../models/member.model.js";
 import { JWT } from "../utils/jwt.js";
 
 const bindReqUserMiddleware = async (req, res, next) => {
@@ -18,8 +19,9 @@ const bindReqUserMiddleware = async (req, res, next) => {
     return next();
   }
 
-  req.user = userId;
-  res.locals.user = req.user;
+  const user = await Member.findById(userId);
+  req.user = user;
+  res.locals.user = user;
 
   next();
 };

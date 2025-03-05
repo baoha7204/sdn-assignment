@@ -1,0 +1,44 @@
+<%- include('../partials/head.ejs') %>
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <%- include('../partials/navigation.ejs') %>
+  
+  <main>
+    <%- include('../partials/message.ejs') %>
+    <div class="container mt-4">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h1 class="h3 mb-0"><%= editing ? 'Edit Brand' : 'Add Brand' %></h1>
+            </div>
+            <div class="card-body">
+              <form action="/admin/brands/<%= editing ? 'edit' : 'add' %>" method="POST" novalidate>
+                <% if (editing) { %>
+                  <input type="hidden" name="brandId" value="<%= brand._id %>">
+                <% } %>
+                
+                <div class="mb-3">
+                  <label for="brandName" class="form-label">Brand Name</label>
+                  <input type="text" id="brandName" name="brandName" class="form-control <%= validationErrors.find(e => e.path === 'brandName') ? 'invalid' : '' %>" value="<%= brand?.brandName || oldInput.value('brandName') %>" required>
+                </div>
+                
+                <div class="d-flex gap-2 justify-content-end">
+                  <a href="/admin/brands" class="btn">
+                    <i class="bi bi-x-circle me-2"></i>Cancel
+                  </a>
+                  <button type="submit" class="btn">
+                    <i class="bi bi-<%= editing ? 'check2-circle' : 'plus-circle' %> me-2"></i>
+                    <%= editing ? 'Update Brand' : 'Add Brand' %>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+<%- include('../partials/end.ejs') %>

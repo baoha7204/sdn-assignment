@@ -1,0 +1,121 @@
+<%- include('../partials/head.ejs') %>
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <%- include('../partials/navigation.ejs') %>
+  
+  <main>
+    <%- include('../partials/message.ejs') %>
+    <div class="container mt-4">
+      <div class="row justify-content-center">
+        <div class="col-md-10">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h1 class="h3 mb-0"><%= editing ? 'Edit Perfume' : 'Add Perfume' %></h1>
+            </div>
+            <div class="card-body">
+              <form action="/admin/perfumes/<%= editing ? 'edit' : 'add' %>" method="POST" novalidate>
+                <% if (editing) { %>
+                  <input type="hidden" name="perfumeId" value="<%= perfume._id %>">
+                <% } %>
+                
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="perfumeName" class="form-label">Perfume Name</label>
+                    <input type="text" id="perfumeName" name="perfumeName" class="form-control <%= validationErrors.find(e => e.path === 'perfumeName') ? 'invalid' : '' %>" value="<%= perfume?.perfumeName || oldInput.value('perfumeName') %>">
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <label for="brand" class="form-label">Brand</label>
+                    <select id="brand" name="brand" class="form-select" required>
+                      <% for (const brand of brands) { %>
+                        <option value="<%= brand._id %>" 
+                          <% if ((perfume?.brand ? (perfume.brand.toString() === brand._id.toString()) : (oldInput.value("brand") === brand._id.toString()))) { %>
+                            selected
+                          <% } %>
+                        >
+                          <%= brand.brandName %>
+                        </option>
+                      <% } %>
+                    </select>
+                  </div>
+                  
+                  <div class="col-md-12">
+                    <label for="uri" class="form-label">Image URL</label>
+                    <input type="text" id="uri" name="uri" class="form-control <%= validationErrors.find(e => e.path === 'uri') ? 'invalid' : '' %>" value="<%= perfume?.uri || oldInput.value('uri') %>" required>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <label for="price" class="form-label">Price</label>
+                    <div class="input-group">
+                      <span class="input-group-text">$</span>
+                      <input type="number" id="price" name="price" step="0.01" min="0" class="form-control <%= validationErrors.find(e => e.path === 'price') ? 'invalid' : '' %>" value="<%= perfume?.price || oldInput.value('price') %>" required>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <label for="concentration" class="form-label">Concentration</label>
+                    <select id="concentration" name="concentration" class="form-select" required>
+                        <% for (const concentration of concentrationOptions) { %>
+                          <option value="<%= concentration %>" 
+                            <% if (editing && perfume?.concentration ? (perfume.concentration === concentration) : (oldInput.value("concentration") === concentration)) { %>
+                              selected
+                            <% } %>
+                          >
+                            <%= concentration.charAt(0).toUpperCase() + concentration.slice(1) %>
+                          </option>
+                        <% } %>
+                      </select>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <label for="volume" class="form-label">Volume (ml)</label>
+                    <input type="number" id="volume" name="volume" step="1" min="1" class="form-control <%= validationErrors.find(e => e.path === 'volume') ? 'invalid' : '' %>" value="<%= perfume?.volume || oldInput.value('volume') %>" required>
+                  </div>
+                  
+                  <div class="col-md-12">
+                    <label for="targetAudience" class="form-label">Target Audience</label>
+                    <select id="targetAudience" name="targetAudience" class="form-select" required>
+                      <% for (const target of targetOptions) { %>
+                        <option value="<%= target %>" 
+                          <% if (editing && perfume?.targetAudience ? (perfume.targetAudience === target) : (oldInput.value("targetAudience") === target)) { %>
+                            selected
+                          <% } %>
+                        >
+                          <%= target.charAt(0).toUpperCase() + target.slice(1) %>
+                        </option>
+                      <% } %>
+                    </select>
+                  </div>
+                  
+                  <div class="col-md-12">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea id="description" name="description" class="form-control" rows="4"><%= perfume?.description || oldInput.value("description") %></textarea>
+                  </div>
+                  
+                  <div class="col-md-12">
+                    <label for="ingredients" class="form-label">Ingredients</label>
+                    <textarea id="ingredients" name="ingredients" class="form-control" rows="4"><%= perfume?.ingredients || oldInput.value("ingredients")%></textarea>
+                  </div>
+                  
+                  <div class="col-md-12">
+                    <div class="d-flex gap-2 justify-content-end mt-3">
+                      <a href="/admin/perfumes" class="btn">
+                        <i class="bi bi-x-circle me-2"></i>Cancel
+                      </a>
+                      <button type="submit" class="btn">
+                        <i class="bi bi-<%= editing ? 'check2-circle' : 'plus-circle' %> me-2"></i>
+                        <%= editing ? 'Update Perfume' : 'Add Perfume' %>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+<%- include('../partials/end.ejs') %>

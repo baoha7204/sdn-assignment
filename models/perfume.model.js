@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { commentSchema } from "./comment.js";
+import { commentSchema } from "./comment.model.js";
 
 export const TargetAudience = {
   MALE: "male",
@@ -7,16 +7,32 @@ export const TargetAudience = {
   UNISEX: "unisex",
 };
 
+export const PerfumeConcentration = {
+  EXTRACT_DE_PARFUM: "extrait de Parfum (20-30%)",
+  EAU_DE_PARFUM: "eau de Parfum (15-20%)",
+  EAU_DE_TOILETTE: "eau de Toilette (5-15%)",
+  EAU_DE_COLOGNE: "eau de Cologne (2-5%)",
+  EAU_FRAICHE: "eau Fraiche (1-3%)",
+};
+
 const perfumechema = new Schema(
   {
     perfumeName: { type: String, required: true },
     uri: { type: String, required: true },
     price: { type: Number, required: true },
-    concentration: { type: String, required: true },
+    concentration: {
+      type: String,
+      required: true,
+      enum: Object.values(PerfumeConcentration),
+    },
     description: { type: String, required: true },
     ingredients: { type: String, required: true },
     volume: { type: Number, required: true },
-    targetAudience: { type: Object.values(TargetAudience), required: true }, // male, female, unisex
+    targetAudience: {
+      type: String,
+      required: true,
+      enum: Object.values(TargetAudience),
+    },
     comments: [commentSchema],
     brand: {
       type: mongoose.Schema.Types.ObjectId,

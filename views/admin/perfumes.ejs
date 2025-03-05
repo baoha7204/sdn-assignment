@@ -1,0 +1,121 @@
+<%- include('../partials/head.ejs') %>
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <%- include('../partials/navigation.ejs') %>
+  
+  <main>
+    <%- include('../partials/message.ejs') %>
+    <div class="container mt-4">
+      <h1 class="mb-4">Manage Perfumes</h1>
+      
+      <% if (perfumes.length > 0) { %>
+        <div class="d-flex justify-content-end mb-3">
+          <a href="/admin/perfumes/add" class="btn">
+            <i class="bi bi-plus-circle me-2"></i>Add New Perfume
+          </a>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="table table-hover admin-table">
+            <thead class="table-light">
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Price</th>
+                <th>Volume</th>
+                <th>Target</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% for (const perfume of perfumes) { %>
+                <tr>
+                  <td>
+                    <img src="<%= perfume.uri %>" alt="<%= perfume.perfumeName %>" width="50" height="50" class="img-thumbnail">
+                  </td>
+                  <td><%= perfume.perfumeName %></td>
+                  <td><%= perfume.brand.brandName %></td>
+                  <td>$<%= perfume.price.toFixed(2) %></td>
+                  <td><%= perfume.volume %> ml</td>
+                  <td>
+                    <% let targetBadge = 'success';
+                    switch (perfume.targetAudience) {
+                        case 'male':
+                            targetBadge = 'primary';
+                            break;
+                        case 'female':
+                            targetBadge = 'danger';
+                            break;
+                        default:
+                            break;
+                    }
+                    %>
+                    <span class="badge bg-<%= targetBadge %>">
+                      <%= perfume.targetAudience %>
+                    </span>
+                  </td>
+                  <td>
+                    <div class="d-flex gap-2">
+                      <a href="/admin/perfumes/edit/<%= perfume._id %>" class="btn btn-sm">
+                        <i class="bi bi-pencil me-1"></i> Edit
+                      </a>
+                      <form action="/admin/perfumes/<%= perfume._id %>/delete" method="POST" class="delete-perfume-form">
+                        <button type="submit" class="btn btn-sm danger">
+                          <i class="bi bi-trash me-1"></i> Delete
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Pagination -->
+        <nav aria-label="Page navigation" class="mt-4">
+          <ul class="pagination justify-content-center">
+            <% if (hasPreviousPage) { %>
+              <li class="page-item">
+                <a class="page-link" href="/admin/perfumes?page=<%= previousPage %>" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+            <% } else { %>
+              <li class="page-item disabled">
+                <span class="page-link">&laquo;</span>
+              </li>
+            <% } %>
+            
+            <li class="page-item active">
+              <span class="page-link"><%= currentPage %> / <%= totalPages %></span>
+            </li>
+            
+            <% if (hasNextPage) { %>
+              <li class="page-item">
+                <a class="page-link" href="/admin/perfumes?page=<%= nextPage %>" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            <% } else { %>
+              <li class="page-item disabled">
+                <span class="page-link">&raquo;</span>
+              </li>
+            <% } %>
+          </ul>
+        </nav>
+      <% } else { %>
+        <div class="alert alert-info">
+          <p class="mb-3">No perfumes found!</p>
+          <a href="/admin/perfumes/add" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Add New Perfume
+          </a>
+        </div>
+      <% } %>
+    </div>
+  </main>
+  
+  <script src="/js/admin.js"></script>
+<%- include('../partials/end.ejs') %>

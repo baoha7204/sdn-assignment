@@ -1,37 +1,91 @@
 <div class="backdrop"></div>
 <header class="main-header">
-  <nav class="main-header__nav">
-    <ul class="main-header__item-list">
-      <li class="main-header__item">
-        <a class="<%= path === '/' ? 'active' : '' %>" href="/">Home</a>
-      </li>
-    </ul>
-    <ul class="main-header__item-list">
-      <% if (!user) { %>
-      <li class="main-header__item">
-        <a href="/login" class="<%= path === '/login' ? 'active' : '' %>"
-          >Login</a
-        >
-      </li>
-      <li class="main-header__item">
-        <a href="/register" class="<%= path === '/register' ? 'active' : '' %>"
-          >Register</a
-        >
-      </li>
-      <% } else {%>
-      <li class="main-header__item">
-        <a
-          href="/member/profile"
-          class="<%= path.startsWith('/member/profile') ? 'active' : '' %>"
-          >Profile</a
-        >
-      </li>
-      <li class="main-header__item">
-        <form action="/logout" method="POST">
-          <button type="submit">Logout</button>
-        </form>
-        <% }%>
-      </li>
-    </ul>
+  <nav class="navbar navbar-expand-lg main-header__nav">
+    <div class="container-fluid">
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarContent"
+        aria-controls="navbarContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav me-auto main-header__item-list">
+          <li class="nav-item main-header__item">
+            <a class="nav-link <%= path === '/' ? 'active' : '' %>" href="/"
+              >Home</a
+            >
+          </li>
+          <% if (user && user.isAdmin) { %>
+          <li class="nav-item dropdown main-header__item">
+            <a
+              class="nav-link dropdown-toggle <%= path.startsWith('/admin') ? 'active' : '' %>"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Admin
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a
+                  class="dropdown-item <%= path === '/admin/perfumes' ? 'active' : '' %>"
+                  href="/admin/perfumes"
+                  >Manage Perfumes</a
+                >
+              </li>
+              <li>
+                <a
+                  class="dropdown-item <%= path === '/admin/brands' ? 'active' : '' %>"
+                  href="/admin/brands"
+                  >Manage Brands</a
+                >
+              </li>
+            </ul>
+          </li>
+          <% } %>
+        </ul>
+
+        <ul class="navbar-nav main-header__item-list">
+          <% if (!user) { %>
+          <li class="nav-item main-header__item">
+            <a
+              href="/login"
+              class="nav-link <%= path === '/login' ? 'active' : '' %>"
+              >Login</a
+            >
+          </li>
+          <li class="nav-item main-header__item">
+            <a
+              href="/register"
+              class="nav-link <%= path === '/register' ? 'active' : '' %>"
+              >Register</a
+            >
+          </li>
+          <% } else { %>
+          <li class="nav-item main-header__item">
+            <a
+              href="/member/profile"
+              class="nav-link <%= path.startsWith('/member/profile') ? 'active' : '' %>"
+              >Profile</a
+            >
+          </li>
+          <li class="nav-item main-header__item">
+            <form action="/logout" method="POST">
+              <button type="submit" class="btn btn-link nav-link">
+                Logout
+              </button>
+            </form>
+          </li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
   </nav>
 </header>

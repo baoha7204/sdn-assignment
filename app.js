@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
-import session from "express-session";
+import cookieSession from "cookie-session";
 import flash from "connect-flash";
 
 import authRouter from "./routes/auth.js";
@@ -11,10 +11,9 @@ import errorRouter from "./routes/error.js";
 
 import oldInput from "./middlewares/oldInput.js";
 import bindReqUser from "./middlewares/user.js";
+import { isAuth } from "./middlewares/is-auth.js";
 
 import { rootPath } from "./utils/helpers.js";
-import { store } from "./utils/db.js";
-import { isAuth } from "./middlewares/is-auth.js";
 import publicRouter from "./routes/public.js";
 
 dotenv.config();
@@ -29,13 +28,15 @@ app.use(express.static(rootPath("public")));
 await mongoose.connect(process.env.MONGO_URI);
 
 app.use(
-  session({
-    secret: process.env.JWT_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: store,
+  cookieSession({
+    name: "session",
+    keys: [process.env.JWT_SECRET],
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: true,
   })
 );
+
 app.use(oldInput);
 app.use(flash());
 app.use(bindReqUser);

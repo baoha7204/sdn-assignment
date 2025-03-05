@@ -3,6 +3,7 @@ import { validationResult } from "express-validator";
 import Member from "../models/member.js";
 
 import { extractFlashMessage } from "../utils/helpers.js";
+import { JWT } from "../utils/jwt.js";
 
 const getLogin = async (req, res) => {
   const errorMessage = extractFlashMessage(req, "error");
@@ -53,8 +54,11 @@ const postLogin = async (req, res) => {
     req.flash("error", "Invalid email or password.");
     return res.redirect("/login");
   }
-  req.session.user = user;
-  await req.session.save();
+
+  // Generate JWT token and store in cookie-session
+  const token = JWT.generateToken(user._id);
+  req.session.jwt = token;
+
   res.redirect("/");
 };
 
@@ -85,7 +89,8 @@ const postRegister = async (req, res) => {
 };
 
 const postLogout = async (req, res) => {
-  req.session.destroy();
+  // Clear JWT token by setting it to null
+  req.session.jwt = null;
   res.redirect("/");
 };
 

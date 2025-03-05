@@ -25,8 +25,8 @@ const perfumechema = new Schema(
       required: true,
       enum: Object.values(PerfumeConcentration),
     },
-    description: { type: String, required: true },
-    ingredients: { type: String, required: true },
+    description: String,
+    ingredients: String,
     volume: { type: Number, required: true },
     targetAudience: {
       type: String,

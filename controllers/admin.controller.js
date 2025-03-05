@@ -121,7 +121,7 @@ const postAddBrand = async (req, res) => {
 };
 
 const postEditBrand = async (req, res) => {
-  const { brandId } = req.body;
+  const brandId = req.params.brandId;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -341,7 +341,7 @@ const postAddPerfume = async (req, res) => {
 };
 
 const postEditPerfume = async (req, res) => {
-  const { perfumeId } = req.body;
+  const perfumeId = req.params.perfumeId;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {

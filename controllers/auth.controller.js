@@ -88,7 +88,7 @@ const postRegister = async (req, res) => {
   res.redirect("/login");
 };
 
-const postLogout = async (req, res) => {
+const getLogout = async (req, res) => {
   // Clear JWT token by setting it to null
   req.session.jwt = null;
   res.redirect("/");
@@ -99,5 +99,5 @@ export default {
   getRegister,
   postLogin,
   postRegister,
-  postLogout,
+  getLogout,
 };

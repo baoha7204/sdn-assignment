@@ -14,11 +14,14 @@
               <h1 class="h3 mb-0"><%= editing ? 'Edit Perfume' : 'Add Perfume' %></h1>
             </div>
             <div class="card-body">
-              <form action="/admin/perfumes/<%= editing ? 'edit' : 'add' %>" method="POST" novalidate>
-                <% if (editing) { %>
-                  <input type="hidden" name="perfumeId" value="<%= perfume._id %>">
-                <% } %>
-                
+                <% let action = "/admin/perfumes/";
+                    if (editing) {
+                        action += perfume._id + '/edit';
+                    } else {
+                        action += 'add';
+                    }
+                %>
+              <form action="<%= action %>" method="POST" novalidate>
                 <div class="row g-3">
                   <div class="col-md-6">
                     <label for="perfumeName" class="form-label">Perfume Name</label>

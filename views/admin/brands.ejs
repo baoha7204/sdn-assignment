@@ -34,7 +34,7 @@
                   <td><%= brand.createdAt.toLocaleDateString() %></td>
                   <td>
                     <div class="d-flex gap-2">
-                      <a href="/admin/brands/edit/<%= brand._id %>" class="btn btn-sm">
+                      <a href="/admin/brands/<%= brand._id %>/edit" class="btn btn-sm">
                         <i class="bi bi-pencil me-1"></i> Edit
                       </a>
                       <form action="/admin/brands/<%= brand._id %>/delete" method="POST" class="delete-brand-form">

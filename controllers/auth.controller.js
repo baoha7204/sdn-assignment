@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator";
 
-import Member from "../models/member.js";
+import Member from "../models/member.model.js";
 
 import { extractFlashMessage } from "../utils/helpers.js";
 import { JWT } from "../utils/jwt.js";

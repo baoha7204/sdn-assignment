@@ -1,7 +1,6 @@
-import Member from "../models/member.js";
 import { JWT } from "../utils/jwt.js";
 
-const bindReqUser = async (req, res, next) => {
+const bindReqUserMiddleware = async (req, res, next) => {
   const token = req.session.jwt;
 
   if (!token) {
@@ -19,10 +18,10 @@ const bindReqUser = async (req, res, next) => {
     return next();
   }
 
-  req.user = userId || null;
+  req.user = userId;
   res.locals.user = req.user;
 
   next();
 };
 
-export default bindReqUser;
+export default bindReqUserMiddleware;

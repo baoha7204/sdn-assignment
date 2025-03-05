@@ -1,6 +1,6 @@
 import Router from "express-promise-router";
 
-import errorController from "../controllers/error.js";
+import errorController from "../controllers/error.controller.js";
 
 const errorRouter = Router();
 

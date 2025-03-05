@@ -1,10 +1,13 @@
 import Router from "express-promise-router";
 
-import authController from "../controllers/auth.js";
+import authController from "../controllers/auth.controller.js";
 
-import { isAuth } from "../middlewares/is-auth.js";
+import isAuth from "../middlewares/is-auth.middleware.js";
 
-import { loginValidation, signupValidation } from "../validators/auth.js";
+import {
+  loginValidation,
+  signupValidation,
+} from "../validators/auth.validator.js";
 
 const authRouter = Router();
 

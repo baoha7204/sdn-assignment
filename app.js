@@ -5,16 +5,16 @@ import dotenv from "dotenv";
 import cookieSession from "cookie-session";
 import flash from "connect-flash";
 
-import authRouter from "./routes/auth.js";
-import memberRouter from "./routes/member.js";
-import errorRouter from "./routes/error.js";
+import authRouter from "./routes/auth.route.js";
+import memberRouter from "./routes/member.route.js";
+import errorRouter from "./routes/error.route.js";
+import publicRouter from "./routes/public.route.js";
 
-import oldInput from "./middlewares/oldInput.js";
-import bindReqUser from "./middlewares/user.js";
-import { isAuth } from "./middlewares/is-auth.js";
+import oldInputMiddleware from "./middlewares/oldInput.middleware.js";
+import bindReqUserMiddleware from "./middlewares/user.middleware.js";
+import isAuthMiddleware from "./middlewares/is-auth.middleware.js";
 
 import { rootPath } from "./utils/helpers.js";
-import publicRouter from "./routes/public.js";
 
 dotenv.config();
 
@@ -37,13 +37,13 @@ app.use(
   })
 );
 
-app.use(oldInput);
+app.use(oldInputMiddleware);
 app.use(flash());
-app.use(bindReqUser);
+app.use(bindReqUserMiddleware);
 
 app.use(publicRouter);
 app.use(authRouter);
-app.use("/member", isAuth, memberRouter);
+app.use("/member", isAuthMiddleware, memberRouter);
 app.use(errorRouter);
 
 app.listen(3000, async () => {

@@ -1,17 +1,7 @@
-import Member from "../models/member.js";
-import { JWT } from "../utils/jwt.js";
+import Member from "../models/member.model.js";
 
-export const isAuth = async (req, res, next) => {
-  const token = req.session.jwt;
-
-  if (!token) {
-    req.flash("error", "Unauthorized");
-    return res.redirect("/login");
-  }
-
-  const { valid } = JWT.verifyToken(token);
-
-  if (!valid || !req.user) {
+const isAuthMiddleware = async (req, res, next) => {
+  if (!req.user) {
     req.flash("error", "Unauthorized or session expired");
     return res.redirect("/login");
   }
@@ -28,3 +18,5 @@ export const isAuth = async (req, res, next) => {
 
   next();
 };
+
+export default isAuthMiddleware;

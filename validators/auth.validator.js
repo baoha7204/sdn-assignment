@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import Member from "../models/member.js";
+import Member from "../models/member.model.js";
 
 export const loginValidation = [
   body("username", "Invalid username").trim().notEmpty(),

@@ -9,7 +9,7 @@ function initOldInputInSession(req, name) {
   }
 }
 
-export default function oldInput(req, res, next) {
+export default function oldInputMiddleware(req, res, next) {
   if (!req.session) {
     return;
   }

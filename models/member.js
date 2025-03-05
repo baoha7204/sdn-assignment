@@ -19,16 +19,14 @@ const memberSchema = new Schema(
 );
 
 memberSchema.pre("save", async function (done) {
-  try {
-    if (this.isModified("password")) {
-      const hashedPassword = await Password.hashPassword(this.password);
-      this.set("password", hashedPassword);
-    }
-
-    done();
-  } catch (error) {
-    done(error);
+  if (this.isModified("password")) {
+    const hashedPassword = await Password.hashPassword(this.password).catch(
+      done
+    );
+    this.set("password", hashedPassword);
   }
+
+  done();
 });
 
 memberSchema.methods.matchPassword = async function (enteredPassword) {

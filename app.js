@@ -11,10 +11,11 @@ import errorRouter from "./routes/error.js";
 
 import oldInput from "./middlewares/oldInput.js";
 import bindReqUser from "./middlewares/user.js";
-import { csrfProtection, csrfToken } from "./middlewares/csrf.js";
 
 import { rootPath } from "./utils/helpers.js";
 import { store } from "./utils/db.js";
+import { isAuth } from "./middlewares/is-auth.js";
+import publicRouter from "./routes/public.js";
 
 dotenv.config();
 
@@ -36,13 +37,12 @@ app.use(
   })
 );
 app.use(oldInput);
-app.use(csrfProtection);
 app.use(flash());
 app.use(bindReqUser);
-app.use(csrfToken);
 
+app.use(publicRouter);
 app.use(authRouter);
-app.use(memberRouter);
+app.use("/member", isAuth, memberRouter);
 app.use(errorRouter);
 
 app.listen(3000, async () => {

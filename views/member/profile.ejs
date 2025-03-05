@@ -1,0 +1,38 @@
+<%- include('../partials/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="stylesheet" href="/css/member/change-password.css">
+</head>
+
+<body>
+   <%- include('../partials/navigation.ejs') %>
+
+    <main>
+        <% if (errorMessage) { %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+        <% } else if (successMessage) { %>
+            <div class="user-message user-message--success"><%= successMessage %></div>
+        <% } %>
+        <form class="login-form" action="/member/profile" method="POST" novalidate>
+            <div class="form-control">
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" value="<%= user.name || oldInput.value('name') %>" class="<%= validationErrors.find(e => e.path === 'name') ? 'invalid' : '' %>">
+            </div>
+            <div class="form-control">
+                <label for="YOB">Year of birth</label>
+                <input type="number" name="YOB" id="YOB" value="<%= user.YOB ||oldInput.value('YOB') %>" class="<%= validationErrors.find(e => e.path === 'YOB') ? 'invalid' : '' %>">
+            </div>
+            <div class="form-control">
+                <label for="gender">Gender</label>
+                <select name="gender" id="gender" value="<%= user.gender.toString() %>">
+                    <option value="true">Male</option>
+                    <option value="false">Female</option>
+                </select>
+            </div>
+            <button class="btn" type="submit">Edit Profile</button>
+        </form>
+        <div class="change-password">
+            <a href="/member/profile/change-password" class="btn">Change Password?</a>
+        </div>
+    </main>
+<%- include('../partials/end.ejs') %>

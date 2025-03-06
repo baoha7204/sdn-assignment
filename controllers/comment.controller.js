@@ -6,29 +6,29 @@ const addComment = async (req, res) => {
   const { perfumeId } = req.params;
   const { rating, content } = req.body;
 
+  const perfume = await Perfume.findById(perfumeId);
+
+  if (!perfume) {
+    req.flash("error", "Perfume not found");
+    return res.redirect("/");
+  }
+
+  if (!errors.isEmpty()) {
+    req.flash("error", errors.array()[0].msg);
+    return res.redirect(`/perfumes/${perfumeId}`);
+  }
+
+  // Check if user already commented on this perfume
+  const existingComment = perfume.comments.find(
+    (comment) => comment.author.toString() === req.user._id.toString()
+  );
+
+  if (existingComment) {
+    req.flash("error", "You have already commented on this perfume");
+    return res.redirect(`/perfumes/${perfumeId}`);
+  }
+
   try {
-    const perfume = await Perfume.findById(perfumeId);
-
-    if (!perfume) {
-      req.flash("error", "Perfume not found");
-      return res.redirect("/");
-    }
-
-    if (!errors.isEmpty()) {
-      req.flash("error", errors.array()[0].msg);
-      return res.redirect(`/perfumes/${perfumeId}`);
-    }
-
-    // Check if user already commented on this perfume
-    const existingComment = perfume.comments.find(
-      (comment) => comment.author.toString() === req.user._id.toString()
-    );
-
-    if (existingComment) {
-      req.flash("error", "You have already commented on this perfume");
-      return res.redirect(`/perfumes/${perfumeId}`);
-    }
-
     // Add new comment
     perfume.comments.push({
       rating: parseInt(rating),
@@ -51,33 +51,31 @@ const editComment = async (req, res) => {
   const { perfumeId, commentId } = req.params;
   const { rating, content } = req.body;
 
+  const perfume = await Perfume.findById(perfumeId);
+  if (!perfume) {
+    req.flash("error", "Perfume not found");
+    return res.redirect("/");
+  }
+
+  if (!errors.isEmpty()) {
+    req.flash("error", errors.array()[0].msg);
+    return res.redirect(`/perfumes/${perfumeId}`);
+  }
+
+  // Find the comment
+  const comment = perfume.comments.id(commentId);
+  if (!comment) {
+    req.flash("error", "Comment not found");
+    return res.redirect(`/perfumes/${perfumeId}`);
+  }
+
+  // Check if user is the author of the comment
+  if (comment.author.toString() !== req.user._id.toString()) {
+    req.flash("error", "You can only edit your own comments");
+    return res.redirect(`/perfumes/${perfumeId}`);
+  }
+
   try {
-    const perfume = await Perfume.findById(perfumeId);
-
-    if (!perfume) {
-      req.flash("error", "Perfume not found");
-      return res.redirect("/");
-    }
-
-    if (!errors.isEmpty()) {
-      req.flash("error", errors.array()[0].msg);
-      return res.redirect(`/perfumes/${perfumeId}`);
-    }
-
-    // Find the comment
-    const comment = perfume.comments.id(commentId);
-
-    if (!comment) {
-      req.flash("error", "Comment not found");
-      return res.redirect(`/perfumes/${perfumeId}`);
-    }
-
-    // Check if user is the author of the comment
-    if (comment.author.toString() !== req.user._id.toString()) {
-      req.flash("error", "You can only edit your own comments");
-      return res.redirect(`/perfumes/${perfumeId}`);
-    }
-
     // Update comment
     comment.rating = parseInt(rating);
     comment.content = content;
@@ -95,28 +93,26 @@ const editComment = async (req, res) => {
 const deleteComment = async (req, res) => {
   const { perfumeId, commentId } = req.params;
 
+  const perfume = await Perfume.findById(perfumeId);
+  if (!perfume) {
+    req.flash("error", "Perfume not found");
+    return res.redirect("/");
+  }
+
+  // Find the comment
+  const comment = perfume.comments.id(commentId);
+  if (!comment) {
+    req.flash("error", "Comment not found");
+    return res.redirect(`/perfumes/${perfumeId}`);
+  }
+
+  // Check if user is the author of the comment
+  if (comment.author.toString() !== req.user._id.toString()) {
+    req.flash("error", "You can only delete your own comments");
+    return res.redirect(`/perfumes/${perfumeId}`);
+  }
+
   try {
-    const perfume = await Perfume.findById(perfumeId);
-
-    if (!perfume) {
-      req.flash("error", "Perfume not found");
-      return res.redirect("/");
-    }
-
-    // Find the comment
-    const comment = perfume.comments.id(commentId);
-
-    if (!comment) {
-      req.flash("error", "Comment not found");
-      return res.redirect(`/perfumes/${perfumeId}`);
-    }
-
-    // Check if user is the author of the comment
-    if (comment.author.toString() !== req.user._id.toString()) {
-      req.flash("error", "You can only delete your own comments");
-      return res.redirect(`/perfumes/${perfumeId}`);
-    }
-
     // Remove comment
     await Perfume.updateOne(
       { _id: perfumeId },

@@ -154,17 +154,16 @@ const postEditBrand = async (req, res) => {
 
 const deleteBrand = async (req, res) => {
   const brandId = req.params.brandId;
+  // Check if brand is used by any perfumes
+  const isUsed = await Brand.isUsedByPerfumes(brandId);
+
+  if (isUsed) {
+    req.flash("error", "Cannot delete brand as it is used by perfumes");
+    return res.redirect("/admin/brands");
+  }
+
   try {
-    // Check if brand is used by any perfumes
-    const isUsed = await Brand.isUsedByPerfumes(brandId);
-
-    if (isUsed) {
-      req.flash("error", "Cannot delete brand as it is used by perfumes");
-      return res.redirect("/admin/brands");
-    }
-
     await Brand.findByIdAndDelete(brandId);
-
     req.flash("success", "Brand deleted successfully");
   } catch (error) {
     console.error(error);
@@ -420,17 +419,17 @@ const getMembers = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
     const skip = (page - 1) * limit;
-    
+
     // Add role filter functionality
     const roleFilter = req.query.role;
     let filterQuery = {};
-    
-    if (roleFilter === 'admin') {
+
+    if (roleFilter === "admin") {
       filterQuery = { isAdmin: true };
-    } else if (roleFilter === 'member') {
+    } else if (roleFilter === "member") {
       filterQuery = { isAdmin: false };
     }
-    
+
     // Apply filters to the query
     const members = await Member.find(filterQuery)
       .sort({ createdAt: -1 })
@@ -453,7 +452,7 @@ const getMembers = async (req, res) => {
       previousPage: page - 1,
       errorMessage,
       successMessage,
-      activeRole: roleFilter || 'all' // Track the active filter
+      activeRole: roleFilter || "all", // Track the active filter
     });
   } catch (error) {
     console.error(error);

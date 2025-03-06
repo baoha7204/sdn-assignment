@@ -44,21 +44,20 @@ const postChangePassword = async (req, res) => {
 
   const { oldPassword, newPassword } = req.body;
   const user = await Member.findById(req.user._id);
+  // Check if old password is correct using model's matchPassword method
+  const isMatch = await user.matchPassword(oldPassword);
+  if (!isMatch) {
+    return res.status(422).render("member/change-password", {
+      pageTitle: "Change password",
+      path: "/member/profile/change-password",
+      errorMessage: "Old password is incorrect.",
+      successMessage: null,
+      validationErrors: [{ path: "oldPassword" }],
+      oldInput: req.oldInput,
+    });
+  }
 
   try {
-    // Check if old password is correct using model's matchPassword method
-    const isMatch = await user.matchPassword(oldPassword);
-    if (!isMatch) {
-      return res.status(422).render("member/change-password", {
-        pageTitle: "Change password",
-        path: "/member/profile/change-password",
-        errorMessage: "Old password is incorrect.",
-        successMessage: null,
-        validationErrors: [{ path: "oldPassword" }],
-        oldInput: req.oldInput,
-      });
-    }
-
     // Set the new password and let the pre-save hook handle the hashing
     user.password = newPassword;
     await user.save();

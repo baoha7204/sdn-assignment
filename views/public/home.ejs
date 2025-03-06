@@ -1,4 +1,5 @@
 <%- include('../partials/head.ejs') %>
+<link rel="stylesheet" href="/css/product.css">
 </head>
 
 <body>
@@ -6,6 +7,91 @@
 
     <main>
         <%- include('../partials/message.ejs') %>
-        Hi there
+        
+        <div class="container mt-4">
+            <h1 class="mb-4">Perfume Collection</h1>
+            
+            <!-- Search and Filter Form -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form action="/" method="GET" class="row">
+                        <div class="col-md-6 mb-2">
+                            <div class="input-group">
+                                <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    placeholder="Search by perfume name" 
+                                    name="search"
+                                    value="<%= locals.searchQuery || '' %>"
+                                >
+                                <button class="btn" type="submit">Search</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="input-group">
+                                <select class="form-select" name="brand">
+                                    <option value="">All Brands</option>
+                                    <% if (locals.brands && brands.length > 0) { %>
+                                        <% brands.forEach(brand => { %>
+                                            <option value="<%= brand._id %>" <%= locals.brandFilter && brandFilter == brand._id.toString() ? 'selected' : '' %>>
+                                                <%= brand.brandName %>
+                                            </option>
+                                        <% }) %>
+                                    <% } %>
+                                </select>
+                                <button class="btn" type="submit">Filter</button>
+                                <a href="/" class="btn danger">Reset</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <% if (locals.perfumes && perfumes.length > 0) { %>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                    <% perfumes.forEach(perfume => { %>
+                        <div class="col">
+                            <div class="card perfume-item h-100">
+                                <img 
+                                    src="<%= perfume.uri %>" 
+                                    class="card-img-top" 
+                                    alt="<%= perfume.perfumeName %>"
+                                    style="height: 200px; object-fit: contain;"
+                                >
+                                <div class="card-body">
+                                    <h5 class="card-title"><%= perfume.perfumeName %></h5>
+                                    <p class="card-text">
+                                        <span class="badge bg-info"><%= perfume.targetAudience %></span>
+                                        <span class="badge bg-secondary"><%= perfume.brand.brandName %></span>
+                                    </p>
+                                    <a href="/perfumes/<%= perfume._id %>" class="btn">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+                
+                <!-- Pagination -->
+                <% if (locals.totalPages > 1) { %>
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item <%= !hasPreviousPage ? 'disabled' : '' %>">
+                                <a class="page-link" href="/?page=<%= previousPage %><%= searchQuery ? `&search=${searchQuery}` : '' %><%= brandFilter ? `&brand=${brandFilter}` : '' %>">Previous</a>
+                            </li>
+                            <% for(let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link" href="/?page=<%= i %><%= searchQuery ? `&search=${searchQuery}` : '' %><%= brandFilter ? `&brand=${brandFilter}` : '' %>"><%= i %></a>
+                                </li>
+                            <% } %>
+                            <li class="page-item <%= !hasNextPage ? 'disabled' : '' %>">
+                                <a class="page-link" href="/?page=<%= nextPage %><%= searchQuery ? `&search=${searchQuery}` : '' %><%= brandFilter ? `&brand=${brandFilter}` : '' %>">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                <% } %>
+            <% } else { %>
+                <div class="alert alert-info">No perfumes found.</div>
+            <% } %>
+        </div>
     </main>
 <%- include('../partials/end.ejs') %>

@@ -14,8 +14,6 @@ import commentRoutes from "./routes/comment.route.js";
 
 import oldInputMiddleware from "./middlewares/oldInput.middleware.js";
 import bindReqUserMiddleware from "./middlewares/user.middleware.js";
-import isAuthMiddleware from "./middlewares/is-auth.middleware.js";
-import isAdminMiddleware from "./middlewares/is-admin.middleware.js";
 
 import { rootPath } from "./utils/helpers.js";
 

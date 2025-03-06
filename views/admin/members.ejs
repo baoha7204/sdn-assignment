@@ -1,0 +1,80 @@
+<%- include('../partials/head.ejs') %>
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <%- include('../partials/navigation.ejs') %>
+  
+  <main>
+    <div class="admin-container">
+      <h1>Members</h1>
+      
+      <%- include('../partials/message.ejs') %>
+
+      <!-- Add role filter controls -->
+      <div class="filter-container mb-4">
+        <form action="/admin/collectors" method="GET" class="filter-form">
+          <div class="form-group">
+            <label for="role-filter">Filter by Role:</label>
+            <select id="role-filter" name="role" class="form-control" onchange="this.form.submit()">
+              <option value="" <%= activeRole === 'all' ? 'selected' : '' %>>All Members</option>
+              <option value="admin" <%= activeRole === 'admin' ? 'selected' : '' %>>Admins Only</option>
+              <option value="member" <%= activeRole === 'member' ? 'selected' : '' %>>Regular Members Only</option>
+            </select>
+          </div>
+        </form>
+      </div>
+
+      <div class="table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Username</th>
+              <th>Name</th>
+              <th>Birth Year</th>
+              <th>Gender</th>
+              <th>Role</th>
+              <th>Registration Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (members.length > 0) { %>
+              <% members.forEach((member, index) => { %>
+                <tr>
+                  <td><%= (currentPage - 1) * 10 + index + 1 %></td>
+                  <td><%= member.username %></td>
+                  <td><%= member.name %></td>
+                  <td><%= member.YOB %></td>
+                  <td><%= member.gender ? 'Male' : 'Female' %></td>
+                  <td><%= member.isAdmin ? 'Admin' : 'Member' %></td>
+                  <td><%= member.createdAt.toLocaleDateString() %></td>
+                </tr>
+              <% }); %>
+            <% } else { %>
+              <tr>
+                <td colspan="7" class="center">No members found!</td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <% if (members.length > 0) { %>
+        <div class="pagination">
+          <% if (hasPreviousPage) { %>
+            <!-- Preserve role filter when paginating -->
+            <a href="?page=<%= previousPage %><%= activeRole !== 'all' ? '&role=' + activeRole : '' %>" class="btn">Previous</a>
+          <% } %>
+          
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <a href="?page=<%= i %><%= activeRole !== 'all' ? '&role=' + activeRole : '' %>" class="btn <%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+          <% } %>
+          
+          <% if (hasNextPage) { %>
+            <a href="?page=<%= nextPage %><%= activeRole !== 'all' ? '&role=' + activeRole : '' %>" class="btn">Next</a>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+  </main>
+<%- include('../partials/end.ejs') %>

@@ -42,4 +42,7 @@ adminRouter.post(
 );
 adminRouter.post("/perfumes/:perfumeId/delete", adminController.deletePerfume);
 
+// Members/Collectors route
+adminRouter.get("/collectors", adminController.getMembers);
+
 export default adminRouter;

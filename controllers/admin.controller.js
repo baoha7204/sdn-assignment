@@ -4,6 +4,7 @@ import Perfume, {
   PerfumeConcentration,
   TargetAudience,
 } from "../models/perfume.model.js";
+import Member from "../models/member.model.js";
 
 import { extractFlashMessage } from "../utils/helpers.js";
 
@@ -410,6 +411,57 @@ const deletePerfume = async (req, res) => {
   }
 };
 
+// Member operations
+const getMembers = async (req, res) => {
+  const errorMessage = extractFlashMessage(req, "error");
+  const successMessage = extractFlashMessage(req, "success");
+
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+    
+    // Add role filter functionality
+    const roleFilter = req.query.role;
+    let filterQuery = {};
+    
+    if (roleFilter === 'admin') {
+      filterQuery = { isAdmin: true };
+    } else if (roleFilter === 'member') {
+      filterQuery = { isAdmin: false };
+    }
+    
+    // Apply filters to the query
+    const members = await Member.find(filterQuery)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // Count with the same filter for pagination
+    const totalMembers = await Member.countDocuments(filterQuery);
+    const totalPages = Math.ceil(totalMembers / limit);
+
+    res.render("admin/members", {
+      pageTitle: "Admin: Manage Members",
+      path: "/admin/collectors",
+      members,
+      currentPage: page,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+      nextPage: page + 1,
+      previousPage: page - 1,
+      errorMessage,
+      successMessage,
+      activeRole: roleFilter || 'all' // Track the active filter
+    });
+  } catch (error) {
+    console.error(error);
+    req.flash("error", "Error fetching members");
+    res.redirect("/");
+  }
+};
+
 export default {
   getBrands,
   getBrandForm,
@@ -423,4 +475,5 @@ export default {
   postAddPerfume,
   postEditPerfume,
   deletePerfume,
+  getMembers,
 };

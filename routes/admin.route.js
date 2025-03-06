@@ -1,6 +1,8 @@
 import Router from "express-promise-router";
 import adminController from "../controllers/admin.controller.js";
+
 import isAdminMiddleware from "../middlewares/is-admin.middleware.js";
+import isAuthMiddleware from "../middlewares/is-auth.middleware.js";
 
 import {
   brandValidation,
@@ -9,7 +11,7 @@ import {
 
 const adminRouter = Router();
 
-// Apply admin middleware to all routes
+adminRouter.use(isAuthMiddleware);
 adminRouter.use(isAdminMiddleware);
 
 // Brand routes

@@ -10,6 +10,7 @@ import memberRouter from "./routes/member.route.js";
 import errorRouter from "./routes/error.route.js";
 import publicRouter from "./routes/public.route.js";
 import adminRouter from "./routes/admin.route.js";
+import commentRoutes from "./routes/comment.route.js";
 
 import oldInputMiddleware from "./middlewares/oldInput.middleware.js";
 import bindReqUserMiddleware from "./middlewares/user.middleware.js";
@@ -45,8 +46,9 @@ app.use(bindReqUserMiddleware);
 
 app.use(publicRouter);
 app.use(authRouter);
-app.use("/admin", isAuthMiddleware, isAdminMiddleware, adminRouter);
-app.use("/member", isAuthMiddleware, memberRouter);
+app.use("/admin", adminRouter);
+app.use("/member", memberRouter);
+app.use(commentRoutes);
 app.use(errorRouter);
 
 app.listen(3000, async () => {

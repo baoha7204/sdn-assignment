@@ -1,5 +1,6 @@
 <%- include('../partials/head.ejs') %>
 <link rel="stylesheet" href="/css/product.css">
+<link rel="stylesheet" href="/css/concentration.css">
 </head>
 
 <body>
@@ -33,7 +34,21 @@
                             
                             <div class="mb-3">
                                 <span class="badge bg-info"><%= perfume.targetAudience %></span>
-                                <span class="badge bg-secondary"><%= perfume.concentration %></span>
+                                <% 
+                                    let concentrationClass = ""; 
+                                    if (perfume.concentration.includes("extrait")) {
+                                        concentrationClass = "extrait";
+                                    } else if (perfume.concentration.includes("eau de Parfum")) {
+                                        concentrationClass = "eau-de-parfum";
+                                    } else if (perfume.concentration.includes("eau de Toilette")) {
+                                        concentrationClass = "eau-de-toilette";
+                                    } else if (perfume.concentration.includes("eau de Cologne")) {
+                                        concentrationClass = "eau-de-cologne";
+                                    } else if (perfume.concentration.includes("eau Fraiche")) {
+                                        concentrationClass = "eau-fraiche";
+                                    }
+                                %>
+                                <span class="concentration-badge <%= concentrationClass %>"><%= perfume.concentration %></span>
                             </div>
                             
                             <p class="fs-4 fw-bold text-primary">$<%= perfume.price.toFixed(2) %> / <%= perfume.volume %> ml</p>
@@ -49,20 +64,86 @@
             </div>
             
             <!-- Comments Section -->
-            <div class="card">
-                <div class="card-header">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h4>Reviews (<%= perfume.comments.length %>)</h4>
+                    
+                    <% if (locals.user) { 
+                        // Check if user already left a comment
+                        const userComment = perfume.comments.find(comment => 
+                            comment.author && comment.author._id && 
+                            comment.author._id.toString() === user._id.toString()
+                        );
+                        
+                        if (!userComment) { %>
+                            <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#commentForm">
+                                Add Review
+                            </button>
+                        <% } 
+                    } %>
                 </div>
+                
+                <% if (locals.user) { %>
+                    <div class="collapse" id="commentForm">
+                        <div class="card-body">
+                            <form action="/perfumes/<%= perfume._id %>/comments" method="POST">
+                                <div class="mb-3">
+                                    <label for="rating" class="form-label">Rating</label>
+                                    <select class="form-select" id="rating" name="rating" required>
+                                        <option value="">Select rating</option>
+                                        <option value="1">1 star ⭐</option>
+                                        <option value="2">2 stars ⭐⭐</option>
+                                        <option value="3">3 stars ⭐⭐⭐</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="content" class="form-label">Review</label>
+                                    <textarea 
+                                        class="form-control" 
+                                        id="content" 
+                                        name="content" 
+                                        rows="3" 
+                                        required 
+                                        minlength="5" 
+                                        maxlength="500"
+                                    ></textarea>
+                                    <div class="form-text">Between 5 and 500 characters.</div>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-success">Submit Review</button>
+                            </form>
+                        </div>
+                    </div>
+                <% } %>
+                
                 <div class="card-body">
                     <% if (perfume.comments && perfume.comments.length > 0) { %>
                         <div class="list-group">
-                            <% perfume.comments.forEach(comment => { %>
+                            <% perfume.comments.forEach(comment => { 
+                                const isUserComment = locals.user && comment.author && 
+                                    comment.author._id && comment.author._id.toString() === user._id.toString();
+                            %>
                                 <div class="list-group-item">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h6 class="mb-1"><%= comment.author ? comment.author.name : 'Unknown user' %></h6>
-                                        <small class="text-muted">
-                                            <%= new Date(comment.createdAt).toLocaleDateString() %>
-                                        </small>
+                                        <div>
+                                            <small class="text-muted me-2">
+                                                <%= new Date(comment.createdAt).toLocaleDateString() %>
+                                            </small>
+                                            <% if (isUserComment) { %>
+                                                <button class="btn btn-sm" type="button" 
+                                                   data-bs-toggle="collapse" data-bs-target="#editComment<%= comment._id %>">
+                                                   Edit
+                                                </button>
+                                                <form class="d-inline" action="/perfumes/<%= perfume._id %>/comments/<%= comment._id %>/delete" method="POST">
+                                                    <button type="submit" class="btn btn-sm danger" 
+                                                       onclick="return confirm('Are you sure you want to delete this comment?')">
+                                                       Delete
+                                                    </button>
+                                                </form>
+                                            <% } %>
+                                        </div>
                                     </div>
                                     <div class="mb-2">
                                         <% for (let i = 0; i < comment.rating; i++) { %>
@@ -73,6 +154,43 @@
                                         <% } %>
                                     </div>
                                     <p class="mb-1"><%= comment.content %></p>
+                                    
+                                    <% if (isUserComment) { %>
+                                        <div class="collapse mt-3" id="editComment<%= comment._id %>">
+                                            <div class="card card-body bg-light">
+                                                <form action="/perfumes/<%= perfume._id %>/comments/<%= comment._id %>/edit" method="POST">
+                                                    <div class="mb-3">
+                                                        <label for="editRating<%= comment._id %>" class="form-label">Rating</label>
+                                                        <select 
+                                                            class="form-select" 
+                                                            id="editRating<%= comment._id %>" 
+                                                            name="rating" 
+                                                            required
+                                                        >
+                                                            <option value="1" <%= comment.rating === 1 ? 'selected' : '' %>>1 star ⭐</option>
+                                                            <option value="2" <%= comment.rating === 2 ? 'selected' : '' %>>2 stars ⭐⭐</option>
+                                                            <option value="3" <%= comment.rating === 3 ? 'selected' : '' %>>3 stars ⭐⭐⭐</option>
+                                                        </select>
+                                                    </div>
+                                                    
+                                                    <div class="mb-3">
+                                                        <label for="editContent<%= comment._id %>" class="form-label">Review</label>
+                                                        <textarea 
+                                                            class="form-control" 
+                                                            id="editContent<%= comment._id %>" 
+                                                            name="content" 
+                                                            rows="3" 
+                                                            required 
+                                                            minlength="5" 
+                                                            maxlength="500"
+                                                        ><%= comment.content %></textarea>
+                                                    </div>
+                                                    
+                                                    <button type="submit" class="btn btn-success">Update Review</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    <% } %>
                                 </div>
                             <% }) %>
                         </div>

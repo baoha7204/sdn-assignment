@@ -1,0 +1,47 @@
+.concentration-badge {
+  display: inline-block;
+  padding: 0.25em 0.6em;
+  font-size: 0.85em;
+  font-weight: 700;
+  border-radius: 0.25rem;
+  text-transform: none;
+  letter-spacing: 0.5px;
+}
+
+.concentration-badge.extrait {
+  background: linear-gradient(45deg, #b78628, #fcc201, #b78628);
+  color: #000;
+  border: 1px solid #977318;
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: shine 2s infinite alternate;
+}
+
+@keyframes shine {
+  from {
+    box-shadow: 0 0 5px rgba(252, 194, 1, 0.5);
+  }
+  to {
+    box-shadow: 0 0 15px rgba(252, 194, 1, 0.8);
+  }
+}
+
+.concentration-badge.eau-de-parfum {
+  background-color: #9c27b0;
+  color: white;
+}
+
+.concentration-badge.eau-de-toilette {
+  background-color: #3f51b5;
+  color: white;
+}
+
+.concentration-badge.eau-de-cologne {
+  background-color: #00bcd4;
+  color: white;
+}
+
+.concentration-badge.eau-fraiche {
+  background-color: #4caf50;
+  color: white;
+}

@@ -37,7 +37,7 @@ const perfumechema = new Schema(
     brand: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Brand",
-      require: true,
+      required: true,
     },
   },
   { timestamps: true }
